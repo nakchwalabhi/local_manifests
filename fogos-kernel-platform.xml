@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  fogos (Motorola moto g34 5G / SM6375 "blair") - kernel-platform manifest.
+  Standalone kernel build (no AOSP/Lineage framework).
+  Adapted from Samsung-QTI/manifest : release/kernel.xml (the working blair
+  6.1 reference device, gta9pwifi).
+
+  Produces the ACK/kleaf "kernel platform" layout:
+    kernel_platform/msm-kernel     the fogos 6.1 kernel (your fork)
+    kernel_platform/devicetrees    fogos DTs, linked into the kernel tree
+    kernel_platform/build/kernel   ACK build scripts (kernel/build)
+    kernel_platform/config         build config (build.sh)
+    kernel_platform/external/dtc   dtc
+    kernel_platform/prebuilts/...  clang, build-tools, bazel, mkbootimg (CLO-LA)
+
+  Sync:
+    mkdir fogos-kernel && cd fogos-kernel
+    repo init -u https://github.com/nakchwalabhi/local_manifests -b lineage-23.1 -m fogos-kernel-platform.xml
+    repo sync -c -j8
+
+  Build (see BUILD-FOGOS-6.1.md, Route B):
+    cd kernel_platform
+    BUILD_CONFIG=msm-kernel/build.config.msm.blair build/build.sh
+
+  NOTE: if the build complains that kernel_platform/common is missing, add the
+  ACK common kernel repo (the reference keeps common and msm-kernel separate).
+-->
+<manifest>
+  <remote fetch="https://github.com/nakchwalabhi"      name="nakchwal"/>
+  <remote fetch="https://github.com/Samsung-QTI"       name="sqti"/>
+  <remote fetch="https://github.com/Samsung-QTI-Blair" name="sqti-blair"/>
+  <remote fetch="https://git.codelinaro.org/clo/la"    name="clo-la"/>
+
+  <!-- MSM kernel (fogos 6.1 fork) -->
+  <project remote="nakchwal" name="android_kernel_motorola_sm6375-6.1"
+           path="kernel_platform/msm-kernel" revision="6.1/fogos-port"/>
+
+  <!-- fogos device trees, linked into the kernel tree -->
+  <project remote="nakchwal" name="android_kernel_motorola_sm6375-devicetrees"
+           path="kernel_platform/devicetrees" revision="6.1/fogos-port">
+    <linkfile dest="kernel_platform/msm-kernel/arch/arm64/boot/dts/vendor/qcom" src="qcom"/>
+  </project>
+
+  <!-- ACK/QCOM kernel build scripts + config + dtc (tooling the fogos kernel repo lacks) -->
+  <project remote="sqti"       name="android_kernel_build"
+           path="kernel_platform/build/kernel" revision="kernel.lnx.6.1.r46-rel"/>
+  <project remote="sqti-blair" name="android_kernel_platform_build_config"
+           path="kernel_platform/config" revision="P86803AA1"/>
+  <project remote="sqti-blair" name="android_kernel_platform_external_dtc"
+           path="kernel_platform/external/dtc" revision="kernel.build.lnx.2.0.r4-rel"/>
+
+  <!-- CLO-LA prebuilts (verbatim from the reference kernel.xml) -->
+  <project remote="clo-la" name="kernel/prebuilts/build-tools" path="kernel_platform/prebuilts/kernel-build-tools" revision="3892d2c393135d568c9140c801623530eea4104c" upstream="refs/heads/ks-kernel.lnx.3.0.r6-rel">
+    <linkfile dest="kernel_platform/build/prebuilts/kernel-build-tools" src="."/>
+  </project>
+  <project remote="clo-la" name="kernel_platform/build/bazel_common_rules" path="kernel_platform/build/bazel_common_rules" revision="306e6e87b0a20a4ec993f62c80f12fcf7424f9b5" upstream="refs/heads/ks-kernel.lnx.3.0.r6-rel"/>
+  <project remote="clo-la" name="kernel_platform/external/bazel-skylib" path="kernel_platform/external/bazel-skylib" revision="f998e5dc13c03f0eae9e373263d3afff0932c738" upstream="refs/heads/ks-kernel.lnx.3.0.r6-rel"/>
+  <project remote="clo-la" name="kernel_platform/external/bazelbuild-rules_license" path="kernel_platform/external/bazelbuild-rules_license" revision="f578df4fd057ffe2023728444759535685631548" upstream="refs/heads/ks-kernel.lnx.3.0.r6-rel"/>
+  <project remote="clo-la" name="kernel_platform/external/bazelbuild-rules_pkg" path="kernel_platform/external/bazelbuild-rules_pkg" revision="059aaa0ece0c03b731076db6300f50f83d25829a" upstream="refs/heads/ks-kernel.lnx.3.0.r6-rel"/>
+  <project remote="clo-la" name="kernel_platform/external/python/absl-py" path="kernel_platform/external/python/absl-py" revision="fde417bbe6fe2c5d5d6e21a1d2347d0bfbf2a371" upstream="refs/heads/ks-kernel.lnx.3.0.r6-rel"/>
+  <project remote="clo-la" name="kernel_platform/external/stardoc" path="kernel_platform/external/stardoc" revision="3991464e28267e89937b05d800d1b852b3b953b1" upstream="refs/heads/ks-kernel.lnx.3.0.r6-rel"/>
+  <project remote="clo-la" name="kernel_platform/prebuilts/asuite" path="kernel_platform/prebuilts/asuite" revision="087ae92691d24a3eb9a3656028bf7fa2e8822bae" upstream="refs/heads/ks-kernel.lnx.3.0.r6-rel"/>
+  <project remote="clo-la" name="kernel_platform/prebuilts/bazel/linux-x86_64" path="kernel_platform/prebuilts/bazel/linux-x86_64" revision="39f731055c9009d1c7c4fa621b5d6cf1bdb7becb" upstream="refs/heads/ks-kernel.lnx.3.0.r6-rel"/>
+  <project remote="clo-la" name="kernel_platform/prebuilts/build-tools" path="kernel_platform/prebuilts/build-tools" revision="7aaadcd0c00d7308d5d63da620712ba4bf80de6e" upstream="refs/heads/ks-kernel.lnx.3.0.r6-rel">
+    <linkfile dest="kernel_platform/build/prebuilts/build-tools" src="."/>
+  </project>
+  <project remote="clo-la" name="kernel_platform/prebuilts/clang-tools" path="kernel_platform/prebuilts/clang-tools" revision="4d2cba578e8c3265a87f638fdedea87c5d75b996" upstream="refs/heads/ks-kernel.lnx.3.0.r6-rel">
+    <linkfile dest="kernel_platform/build/prebuilts/clang-tools" src="."/>
+  </project>
+  <project remote="clo-la" name="kernel_platform/prebuilts/jdk/jdk11" path="kernel_platform/prebuilts/jdk/jdk11" revision="59824b3398d0bb529a705ba30dbbb35e5792e4d1" upstream="refs/heads/ks-kernel.lnx.3.0.r6-rel"/>
+  <project remote="clo-la" name="kernel_platform/system/tools/mkbootimg" path="kernel_platform/tools/mkbootimg" revision="ea72814383cf32fb85d6569581947b715bed9ba9" upstream="refs/heads/ks-kernel.lnx.3.0.r6-rel"/>
+  <project remote="clo-la" name="kernel_platform/toolchain/prebuilts/ndk/r23" path="kernel_platform/prebuilts/ndk-r23" revision="19ac7e4eded12adb99d4f613490dde6dd0e72664" upstream="refs/heads/ks-kernel.lnx.3.0.r6-rel"/>
+  <project remote="clo-la" name="kernel_platform/tools/tradefederation/prebuilts" path="kernel_platform/prebuilts/tradefed" revision="9e733388af703dae25fdc5944a8ca4687e3c7f96" upstream="refs/heads/ks-kernel.lnx.3.0.r6-rel"/>
+  <project remote="clo-la" name="kernelplatform/prebuilts-master/clang/host/linux-x86" path="kernel_platform/prebuilts/clang/host/linux-x86" revision="01ca564af4c025f35caa9781787b968b5051c0e2" upstream="refs/heads/ks-kernel.lnx.3.0.r6-rel"/>
+  <project remote="clo-la" name="kernelplatform/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8" path="kernel_platform/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8" revision="9c4e391b875cda867a3f1fbc47c20871da23749e" upstream="refs/heads/ks-kernel.lnx.3.0.r6-rel">
+    <linkfile dest="kernel_platform/build/build-tools/sysroot" src="sysroot"/>
+  </project>
+</manifest>
