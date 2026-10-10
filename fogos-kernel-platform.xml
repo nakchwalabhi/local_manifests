@@ -2,58 +2,72 @@
 <!--
   fogos (Motorola moto g34 5G / SM6375 "blair") - kernel-platform manifest.
   Standalone kernel build (no AOSP/Lineage framework).
-  Adapted from Samsung-QTI/manifest : release/kernel.xml (the working blair
-  6.1 reference device, gta9pwifi).
+  Adapted from Samsung-QTI/manifest : release/kernel.xml (working blair 6.1 ref).
 
-  Produces the ACK/kleaf "kernel platform" layout:
-    kernel_platform/msm-kernel          the fogos 6.1 kernel (your fork)
-    kernel_platform/sm6375-devicetrees  the fogos DTs
-    kernel_platform/build/kernel        ACK build scripts (kernel/build)
-    kernel_platform/config              build config (build.sh)
-    kernel_platform/external/dtc        dtc
-    kernel_platform/prebuilts/...       clang, build-tools, bazel, mkbootimg (CLO-LA)
-
-  The kernel repo carries a symlink
-    msm-kernel/arch/arm64/boot/dts/vendor -> ../../../../../sm6375-devicetrees
-  so the devicetrees MUST be checked out at kernel_platform/sm6375-devicetrees
-  (a sibling of msm-kernel). Do NOT add a linkfile for it: repo refuses to write
-  through the kernel's own symlink ("traversing symlinks not allowed").
+  Layout (kernel_platform/):
+    msm-kernel          fogos 6.1 kernel (your fork)
+    sm6375-devicetrees  fogos DTs (sibling of msm-kernel: the kernel's
+                        arch/arm64/boot/dts/vendor symlink targets it)
+    build/kernel        ACK/QCOM build scripts (android_kernel_build)
+    config, build.config, build.sh   build config repo
+    external/dtc        dtc
+    prebuilts/...       clang, build-tools, bazel, mkbootimg (CLO-LA)
 
   Sync:
     mkdir fogos-kernel && cd fogos-kernel
     repo init -u https://github.com/nakchwalabhi/local_manifests -b lineage-23.1 -m fogos-kernel-platform.xml
     repo sync -c -j8
 
-  Build (see BUILD-FOGOS-6.1.md, Route B):
+  Build:
     cd kernel_platform
-    BUILD_CONFIG=msm-kernel/build.config.msm.blair build/build.sh
-
-  NOTE: if the build complains that kernel_platform/common is missing, add the
-  ACK common kernel repo (the reference keeps common and msm-kernel separate).
+    ./build.sh          # build-config wrapper -> kernel_platform/build/android/prepare_vendor.sh
+    # (this tree is Kleaf/Bazel-based; build/build.sh does NOT exist in this layout)
 -->
 <manifest>
   <remote fetch="https://github.com/nakchwalabhi"      name="nakchwal"/>
-  <remote fetch="https://github.com/Samsung-QTI"       name="sqti"/>
-  <remote fetch="https://github.com/Samsung-QTI-Blair" name="sqti-blair"/>
+  <remote fetch="https://github.com/Samsung-QTI"       name="blair"/>
+  <remote fetch="https://github.com/Samsung-QTI-Blair" name="blair-kernel"/>
   <remote fetch="https://git.codelinaro.org/clo/la"    name="clo-la"/>
 
   <!-- MSM kernel (fogos 6.1 fork) -->
   <project remote="nakchwal" name="android_kernel_motorola_sm6375-6.1"
            path="kernel_platform/msm-kernel" revision="6.1/fogos-port"/>
 
-  <!-- fogos device trees: sibling of msm-kernel so the kernel's vendor symlink resolves -->
+  <!-- fogos device trees: sibling of msm-kernel (the kernel's vendor symlink target) -->
   <project remote="nakchwal" name="android_kernel_motorola_sm6375-devicetrees"
            path="kernel_platform/sm6375-devicetrees" revision="6.1/fogos-port"/>
 
-  <!-- ACK/QCOM kernel build scripts + config + dtc (tooling the fogos kernel repo lacks) -->
-  <project remote="sqti"       name="android_kernel_build"
-           path="kernel_platform/build/kernel" revision="kernel.lnx.6.1.r46-rel"/>
-  <project remote="sqti-blair" name="android_kernel_platform_build_config"
-           path="kernel_platform/config" revision="P86803AA1"/>
-  <project remote="sqti-blair" name="android_kernel_platform_external_dtc"
-           path="kernel_platform/external/dtc" revision="kernel.build.lnx.2.0.r4-rel"/>
+  <!-- ACK/QCOM build scripts + build config + dtc (verbatim from the reference) -->
+  <project name="android_kernel_platform_build_config" path="kernel_platform/config" revision="P86803AA1" remote="blair-kernel">
+    <linkfile dest="kernel_platform/build.config" src="build.config"/>
+    <linkfile dest="build.sh" src="build.sh"/>
+  </project>
+  <project name="android_kernel_build" path="kernel_platform/build/kernel" revision="kernel.lnx.6.1.r46-rel" remote="blair">
+    <linkfile dest="kernel_platform/tools/bazel" src="kleaf/bazel.sh"/>
+    <linkfile dest="kernel_platform/build/build_test.sh" src="build_test.sh"/>
+    <linkfile dest="kernel_platform/build/build_utils.sh" src="build_utils.sh"/>
+    <linkfile dest="kernel_platform/build/all-variants.sh" src="all-variants.sh"/>
+    <linkfile dest="kernel_platform/build/brunch" src="brunch"/>
+    <linkfile dest="kernel_platform/build/build_abl.sh" src="build_abl.sh"/>
+    <linkfile dest="kernel_platform/build/build_module.sh" src="build_module.sh"/>
+    <linkfile dest="kernel_platform/build/android/export_headers.py" src="android/export_headers.py"/>
+    <linkfile dest="kernel_platform/build/android/merge_dtbs.py" src="android/merge_dtbs.py"/>
+    <linkfile dest="kernel_platform/build/android/merge_dtbs.sh" src="android/merge_dtbs.sh"/>
+    <linkfile dest="kernel_platform/build/android/prepare_vendor.sh" src="android/prepare_vendor.sh"/>
+    <linkfile dest="kernel_platform/build/BUILD.bazel" src="BUILD.bazel"/>
+    <linkfile dest="kernel_platform/build/build-tools/path" src="build-tools/path"/>
+    <linkfile dest="kernel_platform/build/config.sh" src="config.sh"/>
+    <linkfile dest="kernel_platform/build/envsetup.sh" src="envsetup.sh"/>
+    <linkfile dest="kernel_platform/build/_setup_env.sh" src="_setup_env.sh"/>
+    <linkfile dest="kernel_platform/build/multi-switcher.sh" src="multi-switcher.sh"/>
+    <linkfile dest="kernel_platform/build/kleaf" src="kleaf"/>
+    <linkfile dest="kernel_platform/build/abi" src="abi"/>
+    <linkfile dest="kernel_platform/build/static_analysis" src="static_analysis"/>
+    <linkfile dest="kernel_platform/build/_wrapper_common.sh" src="_wrapper_common.sh"/>
+  </project>
+  <project name="android_kernel_platform_external_dtc" path="kernel_platform/external/dtc" revision="kernel.build.lnx.2.0.r4-rel" remote="blair-kernel"/>
 
-  <!-- CLO-LA prebuilts (verbatim from the reference kernel.xml) -->
+  <!-- CLO-LA prebuilts -->
   <project remote="clo-la" name="kernel/prebuilts/build-tools" path="kernel_platform/prebuilts/kernel-build-tools" revision="3892d2c393135d568c9140c801623530eea4104c" upstream="refs/heads/ks-kernel.lnx.3.0.r6-rel">
     <linkfile dest="kernel_platform/build/prebuilts/kernel-build-tools" src="."/>
   </project>
