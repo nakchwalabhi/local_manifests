@@ -5,9 +5,8 @@
   Adapted from Samsung-QTI/manifest : release/kernel.xml (working blair 6.1 ref).
 
   Layout (kernel_platform/):
-    msm-kernel          fogos 6.1 kernel (your fork)
-    sm6375-devicetrees  fogos DTs (sibling of msm-kernel: the kernel's
-                        arch/arm64/boot/dts/vendor symlink targets it)
+    msm-kernel          fogos 6.1 kernel (your fork)  + WORKSPACE/build_with_bazel.py links
+    sm6375-devicetrees  fogos DTs (sibling of msm-kernel)
     vendor/             fogos DLKM modules (android_kernel_motorola_sm6375-modules)
     build/kernel        ACK/QCOM build scripts (android_kernel_build)
     config, build.config, build.sh   build config repo
@@ -21,11 +20,6 @@
 
   Build:
     ./fogos-build.sh      # wrapper -> kernel_platform/build/android/prepare_vendor.sh
-    # NOTE: this layout is Kleaf/Bazel based. build/build.sh does NOT exist here.
-
-  Modules path: the DLKM modules are mounted at kernel_platform/vendor so the
-  build's "../vendor/qcom/opensource/..." module paths resolve. If the build
-  cannot find them, this is the path to adjust.
 -->
 <manifest>
   <remote fetch="https://github.com/nakchwalabhi"      name="nakchwal"/>
@@ -34,9 +28,13 @@
   <remote fetch="https://github.com/Samsung-QTI-Blair" name="blair-kernel"/>
   <remote fetch="https://git.codelinaro.org/clo/la"    name="clo-la"/>
 
-  <!-- MSM kernel (fogos 6.1 fork) -->
-  <project remote="nakchwal" name="android_kernel_motorola_sm6375-6.1"
-           path="kernel_platform/msm-kernel" revision="6.1/fogos-port"/>
+  <!-- MSM kernel (fogos 6.1 fork); linkfiles surface the Kleaf entrypoints -->
+  <project remote="nakchwal" name="android_kernel_motorola_sm6375-6.1" path="kernel_platform/msm-kernel" revision="6.1/fogos-port">
+    <linkfile dest="kernel_platform/WORKSPACE" src="bazel.WORKSPACE"/>
+    <linkfile dest="kernel_platform/build_with_bazel.py" src="build_with_bazel.py"/>
+    <!-- NOTE: the reference also links build/qcom_build_extensions, but the fogos
+         kernel tree does not ship qcom_build_extensions, so that linkfile is omitted. -->
+  </project>
 
   <!-- fogos device trees: sibling of msm-kernel (the kernel's vendor symlink target) -->
   <project remote="nakchwal" name="android_kernel_motorola_sm6375-devicetrees"
