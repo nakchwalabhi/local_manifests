@@ -8,6 +8,7 @@
     msm-kernel          fogos 6.1 kernel (your fork)
     sm6375-devicetrees  fogos DTs (sibling of msm-kernel: the kernel's
                         arch/arm64/boot/dts/vendor symlink targets it)
+    vendor/             fogos DLKM modules (android_kernel_motorola_sm6375-modules)
     build/kernel        ACK/QCOM build scripts (android_kernel_build)
     config, build.config, build.sh   build config repo
     external/dtc        dtc
@@ -19,12 +20,16 @@
     repo sync -c -j8
 
   Build:
-    cd kernel_platform
-    ./build.sh          # build-config wrapper -> kernel_platform/build/android/prepare_vendor.sh
-    # (this tree is Kleaf/Bazel-based; build/build.sh does NOT exist in this layout)
+    ./fogos-build.sh      # wrapper -> kernel_platform/build/android/prepare_vendor.sh
+    # NOTE: this layout is Kleaf/Bazel based. build/build.sh does NOT exist here.
+
+  Modules path: the DLKM modules are mounted at kernel_platform/vendor so the
+  build's "../vendor/qcom/opensource/..." module paths resolve. If the build
+  cannot find them, this is the path to adjust.
 -->
 <manifest>
   <remote fetch="https://github.com/nakchwalabhi"      name="nakchwal"/>
+  <remote fetch="https://github.com/Fogos-Playground"  name="fogos"/>
   <remote fetch="https://github.com/Samsung-QTI"       name="blair"/>
   <remote fetch="https://github.com/Samsung-QTI-Blair" name="blair-kernel"/>
   <remote fetch="https://git.codelinaro.org/clo/la"    name="clo-la"/>
@@ -36,6 +41,10 @@
   <!-- fogos device trees: sibling of msm-kernel (the kernel's vendor symlink target) -->
   <project remote="nakchwal" name="android_kernel_motorola_sm6375-devicetrees"
            path="kernel_platform/sm6375-devicetrees" revision="6.1/fogos-port"/>
+
+  <!-- fogos DLKM modules (qcom/opensource + motorola drivers) -->
+  <project remote="fogos" name="android_kernel_motorola_sm6375-modules"
+           path="kernel_platform/vendor" revision="lineage-23.1"/>
 
   <!-- ACK/QCOM build scripts + build config + dtc (verbatim from the reference) -->
   <project name="android_kernel_platform_build_config" path="kernel_platform/config" revision="P86803AA1" remote="blair-kernel">
