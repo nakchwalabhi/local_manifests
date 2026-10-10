@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  fogos (Motorola moto g34 5G / SM6375 "blair") - kernel-platform manifest.
+  fogos (Motorola moto g34 5G / SM6375 "blair") kernel-platform manifest.
   Standalone kernel build (no AOSP/Lineage framework).
   Adapted from Samsung-QTI/manifest : release/kernel.xml (working blair 6.1 ref).
 
   Layout (kernel_platform/):
-    msm-kernel          fogos 6.1 kernel (your fork)  + WORKSPACE/build_with_bazel.py links
+    common              ACK common kernel (android14-6.1); required by Kleaf (//common)
+    msm-kernel          fogos 6.1 kernel (your fork) + WORKSPACE/build_with_bazel.py links
     sm6375-devicetrees  fogos DTs (sibling of msm-kernel)
     vendor/             fogos DLKM modules (android_kernel_motorola_sm6375-modules)
     build/kernel        ACK/QCOM build scripts (android_kernel_build)
@@ -19,21 +20,24 @@
     repo sync -c -j8
 
   Build:
-    ./fogos-build.sh      # wrapper -> kernel_platform/build/android/prepare_vendor.sh
+    ./fogos-build.sh
 -->
 <manifest>
   <remote fetch="https://github.com/nakchwalabhi"      name="nakchwal"/>
   <remote fetch="https://github.com/Fogos-Playground"  name="fogos"/>
+  <remote fetch="https://github.com/aosp-mirror"       name="aosp"/>
   <remote fetch="https://github.com/Samsung-QTI"       name="blair"/>
   <remote fetch="https://github.com/Samsung-QTI-Blair" name="blair-kernel"/>
   <remote fetch="https://git.codelinaro.org/clo/la"    name="clo-la"/>
+
+  <!-- ACK common kernel (android14-6.1): required by Kleaf (//common:build.config.constants) -->
+  <project remote="aosp" name="kernel_common"
+           path="kernel_platform/common" revision="android14-6.1"/>
 
   <!-- MSM kernel (fogos 6.1 fork); linkfiles surface the Kleaf entrypoints -->
   <project remote="nakchwal" name="android_kernel_motorola_sm6375-6.1" path="kernel_platform/msm-kernel" revision="6.1/fogos-port">
     <linkfile dest="kernel_platform/WORKSPACE" src="bazel.WORKSPACE"/>
     <linkfile dest="kernel_platform/build_with_bazel.py" src="build_with_bazel.py"/>
-    <!-- NOTE: the reference also links build/qcom_build_extensions, but the fogos
-         kernel tree does not ship qcom_build_extensions, so that linkfile is omitted. -->
   </project>
 
   <!-- fogos device trees: sibling of msm-kernel (the kernel's vendor symlink target) -->
