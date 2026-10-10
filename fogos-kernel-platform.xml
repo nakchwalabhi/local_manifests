@@ -6,12 +6,18 @@
   6.1 reference device, gta9pwifi).
 
   Produces the ACK/kleaf "kernel platform" layout:
-    kernel_platform/msm-kernel     the fogos 6.1 kernel (your fork)
-    kernel_platform/devicetrees    fogos DTs, linked into the kernel tree
-    kernel_platform/build/kernel   ACK build scripts (kernel/build)
-    kernel_platform/config         build config (build.sh)
-    kernel_platform/external/dtc   dtc
-    kernel_platform/prebuilts/...  clang, build-tools, bazel, mkbootimg (CLO-LA)
+    kernel_platform/msm-kernel          the fogos 6.1 kernel (your fork)
+    kernel_platform/sm6375-devicetrees  the fogos DTs
+    kernel_platform/build/kernel        ACK build scripts (kernel/build)
+    kernel_platform/config              build config (build.sh)
+    kernel_platform/external/dtc        dtc
+    kernel_platform/prebuilts/...       clang, build-tools, bazel, mkbootimg (CLO-LA)
+
+  The kernel repo carries a symlink
+    msm-kernel/arch/arm64/boot/dts/vendor -> ../../../../../sm6375-devicetrees
+  so the devicetrees MUST be checked out at kernel_platform/sm6375-devicetrees
+  (a sibling of msm-kernel). Do NOT add a linkfile for it: repo refuses to write
+  through the kernel's own symlink ("traversing symlinks not allowed").
 
   Sync:
     mkdir fogos-kernel && cd fogos-kernel
@@ -35,11 +41,9 @@
   <project remote="nakchwal" name="android_kernel_motorola_sm6375-6.1"
            path="kernel_platform/msm-kernel" revision="6.1/fogos-port"/>
 
-  <!-- fogos device trees, linked into the kernel tree -->
+  <!-- fogos device trees: sibling of msm-kernel so the kernel's vendor symlink resolves -->
   <project remote="nakchwal" name="android_kernel_motorola_sm6375-devicetrees"
-           path="kernel_platform/devicetrees" revision="6.1/fogos-port">
-    <linkfile dest="kernel_platform/msm-kernel/arch/arm64/boot/dts/vendor/qcom" src="qcom"/>
-  </project>
+           path="kernel_platform/sm6375-devicetrees" revision="6.1/fogos-port"/>
 
   <!-- ACK/QCOM kernel build scripts + config + dtc (tooling the fogos kernel repo lacks) -->
   <project remote="sqti"       name="android_kernel_build"
