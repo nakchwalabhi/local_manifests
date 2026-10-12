@@ -74,6 +74,14 @@
            name="android_kernel_build"
            remote="fogos-gh" revision="beryl" />
 
+  <!-- device/lineage/sepolicy: Lineage's sepolicy, which the Motorola tree
+       relies on (hal_attribute_lineage and the lineage_* HAL domains for
+       lineage touch/powershare). AOSPA neither ships it nor wires it in;
+       sm6375-common/BoardConfigCommon.mk includes its sepolicy.mk. -->
+  <project path="device/lineage/sepolicy"
+           name="LineageOS/android_device_lineage_sepolicy"
+           remote="github" revision="lineage-23.0" />
+
   <!-- Kernel: fork adds Android.bp (Lineage ships it as "Androidbp") so Soong
        defines qti_kernel_headers -->
   <project path="kernel/motorola/sm6375"
