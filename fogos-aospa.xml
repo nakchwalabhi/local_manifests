@@ -3,13 +3,13 @@
   AOSPA "beryl" (Android 16 QPR0) local manifest for the Motorola moto g34 5G (fogos).
 
   Drop this file into  .repo/local_manifests/  inside your AOSPA source tree,
-  then run  repo sync -c --no-tags -j8  before building.
+  then run repo sync before building.
 
   Base your source on the AOSPA "beryl" branch (AOSP android-16.0.0_r1):
       repo init -u https://github.com/AOSPA/manifest -b beryl
 
   It also pulls a fork of AOSPA/android_vendor_aospa (branch beryl) that registers
-  the aospa_fogos product, so `lunch aospa_fogos-userdebug` works out of the box.
+  the aospa_fogos product, so the aospa_fogos-userdebug lunch target works out of the box.
 -->
 <manifest>
 
