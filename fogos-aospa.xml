@@ -46,6 +46,16 @@
   <remove-project name="platform/hardware/nxp/weaver" />
   <remove-project name="platform/hardware/nxp/keymint" />
 
+  <!-- AOSP Ready-SE reference StrongBox HAL (external/libese ready_se) collides
+       with AOSPA's NXP vendor HAL: both emit
+       vendor/etc/vintf/manifest/android.hardware.security.keymint-service.strongbox.xml.
+       The device ships its own NXP eSE, so use a fork of external/libese that
+       removes ready_se/google/keymint/KM200/HAL (the reference strongbox HAL). -->
+  <remove-project name="platform/external/libese" />
+  <project path="external/libese"
+           name="android_external_libese"
+           remote="fogos-gh" revision="beryl" />
+
   <!-- Kernel: fork adds Android.bp (Lineage ships it as "Androidbp") so Soong
        defines qti_kernel_headers -->
   <project path="kernel/motorola/sm6375"
