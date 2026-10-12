@@ -2,34 +2,35 @@
 <!--
   AOSPA "beryl" (Android 16 QPR0) local manifest for the Motorola moto g34 5G (fogos).
 
-  This file contains ONLY AOSPA-source overrides. All fogos device dependencies
-  (device trees, kernel, hardware, vendor blobs) are declared in
-  vendor/aospa/products/fogos/beans.xml and synced by AOSPA's barista on lunch.
-
-  Overrides:
-   * vendor/aospa            -> fork that registers the aospa_fogos product
-   * packages/resources/devicesettings -> fork that adds the Lineage-compatible
-                                 "org.lineageos.settings.resources" module (and the
-                                 "none" string) needed by Lineage's MotoActions /
-                                 StylusKeyHandler.
-
-  Use with the AOSPA "beryl" branch:
+  Drop this into .repo/local_manifests/ and use it with the AOSPA "beryl" branch:
       repo init -u https://github.com/AOSPA/manifest -b beryl
+
+  Contains AOSPA-source overrides + the kernel. The remaining fogos device
+  dependencies (device trees, vendor blobs, hardware/motorola, SLSI NFC) are
+  declared in vendor/aospa/products/fogos/beans.xml and synced by AOSPA's barista
+  on lunch. Do not add those here too or repo will abort on a duplicate path.
 -->
 <manifest>
 
   <remote name="fogos-gh" fetch="https://github.com/nakchwalabhi" revision="beryl" />
 
-  <!-- AOSPA vendor config: the fork that registers the aospa_fogos product -->
+  <!-- AOSPA vendor config: fork that registers the aospa_fogos product -->
   <remove-project name="AOSPA/android_vendor_aospa" />
   <project path="vendor/aospa"
            name="android_vendor_aospa"
            remote="fogos-gh" revision="beryl" />
 
-  <!-- Device-settings resources: fork adds org.lineageos.settings.resources -->
+  <!-- Device-settings resources: fork adds org.lineageos.settings.resources
+       (and the "none" string) needed by Lineage's MotoActions / StylusKeyHandler -->
   <remove-project name="AOSPA/android_packages_resources_devicesettings" />
   <project path="packages/resources/devicesettings"
            name="android_packages_resources_devicesettings"
            remote="fogos-gh" revision="beryl" />
+
+  <!-- Kernel: fork adds Android.bp (Lineage ships it as "Androidbp") so Soong
+       defines qti_kernel_headers -->
+  <project path="kernel/motorola/sm6375"
+           name="android_kernel_motorola_sm6375-2"
+           remote="fogos-gh" revision="lineage-23.0" />
 
 </manifest>
