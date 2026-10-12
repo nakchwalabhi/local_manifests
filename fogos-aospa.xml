@@ -65,6 +65,15 @@
            name="android_device_qcom_common"
            remote="fogos-gh" revision="beryl" />
 
+  <!-- device/qcom/kernelscripts (AOSPA/android_kernel_build): its build-kernel
+       macro emits DEFCONFIG=$(1) unquoted, so a multi-word TARGET_KERNEL_CONFIG
+       (base defconfig + ext_configs) is mis-parsed by the shell. Use a fork
+       that quotes DEFCONFIG / FRAGMENT_CONFIG. -->
+  <remove-project name="AOSPA/android_kernel_build" />
+  <project path="device/qcom/kernelscripts"
+           name="android_kernel_build"
+           remote="fogos-gh" revision="beryl" />
+
   <!-- Kernel: fork adds Android.bp (Lineage ships it as "Androidbp") so Soong
        defines qti_kernel_headers -->
   <project path="kernel/motorola/sm6375"
