@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  AOSPA (Android 16) local manifest for the Motorola moto g34 5G (fogos).
+  AOSPA "beryl" (Android 16 QPR0) local manifest for the Motorola moto g34 5G (fogos).
 
   Drop this file into  .repo/local_manifests/  inside your AOSPA source tree,
   then run  repo sync -c --no-tags -j8  before building.
 
-  The two device trees below are the AOSPA (CLO-based) conversions; the vendor
-  trees are the existing blob repos; the kernel and Motorola/SLSI hardware come
-  straight from LineageOS (the kernel is already a CLO/msm-5.4 tree).
+  Base your source on the AOSPA "beryl" branch (AOSP android-16.0.0_r1):
+      repo init -u https://github.com/AOSPA/manifest -b beryl
+
+  The device trees are the AOSPA (CLO-based) conversions of the lineage-23.0
+  (Android 16 QPR0) trees; vendor trees are the existing blob repos; the kernel
+  and Motorola/SLSI hardware come from LineageOS on the matching 23.0 branch.
 -->
 <manifest>
 
@@ -30,19 +33,19 @@
            name="proprietary_vendor_motorola_sm6375-common"
            remote="fogos-gh" revision="beryl" />
 
-  <!-- Kernel (Lineage/CLO msm-5.4, unchanged) -->
+  <!-- Kernel (Lineage/CLO msm-5.4, Android 16 QPR0 branch) -->
   <project path="kernel/motorola/sm6375"
            name="android_kernel_motorola_sm6375"
-           remote="lineage-gh" revision="lineage-23.2" />
+           remote="lineage-gh" revision="lineage-23.0" />
 
   <!-- Motorola hardware (MotoActions, MotoCommonOverlay, sepolicy) -->
   <project path="hardware/motorola"
            name="android_hardware_motorola"
-           remote="lineage-gh" revision="lineage-23.2" />
+           remote="lineage-gh" revision="lineage-23.0" />
 
   <!-- NFC: fogos uses the Samsung SLSI NFC HAL -->
   <project path="hardware/samsung_slsi/nfc"
            name="android_hardware_samsung_slsi_nfc"
-           remote="lineage-gh" revision="lineage-23.2" />
+           remote="lineage-gh" revision="lineage-23.0" />
 
 </manifest>
