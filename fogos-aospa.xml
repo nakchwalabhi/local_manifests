@@ -34,6 +34,18 @@
            name="android_hardware_lineage_compat"
            remote="fogos-gh" revision="beryl" />
 
+  <!-- NXP secure-element HAL: AOSPA's aospa.xml replaces CLO's
+       platform/vendor/nxp/opensource/keymaster with AOSPA's own fork
+       (android_vendor_nxp_opensource_keymaster), which builds the keymint /
+       weaver / authsecret services (the -qti, OMAPI transport variant).
+       CLO's system.xml ALSO pulls platform/hardware/nxp/{weaver,keymint} from
+       non-default sync groups; those install the same vendor/etc/init/*.nxp.rc
+       paths, so both trees cannot coexist. Drop the CLO copies and let AOSPA's
+       fork own the HAL. To use CLO's tree instead, remove these two lines and
+       remove-project AOSPA/android_vendor_nxp_opensource_keymaster. -->
+  <remove-project name="platform/hardware/nxp/weaver" />
+  <remove-project name="platform/hardware/nxp/keymint" />
+
   <!-- Kernel: fork adds Android.bp (Lineage ships it as "Androidbp") so Soong
        defines qti_kernel_headers -->
   <project path="kernel/motorola/sm6375"
