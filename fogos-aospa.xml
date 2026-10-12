@@ -2,55 +2,25 @@
 <!--
   AOSPA "beryl" (Android 16 QPR0) local manifest for the Motorola moto g34 5G (fogos).
 
-  Drop this file into  .repo/local_manifests/  inside your AOSPA source tree,
-  then run repo sync before building.
+  This file deliberately contains ONLY the vendor/aospa override.
 
-  Base your source on the AOSPA "beryl" branch (AOSP android-16.0.0_r1):
+  All fogos device dependencies (device trees, kernel, hardware, vendor blobs) are
+  declared in vendor/aospa/products/fogos/beans.xml and are synced by AOSPA's
+  barista tool when you lunch aospa_fogos-userdebug. Do NOT list those projects
+  here as well: barista writes its own manifest (baristablend.xml) and repo aborts
+  on a duplicate path.
+
+  Use with the AOSPA "beryl" branch:
       repo init -u https://github.com/AOSPA/manifest -b beryl
-
-  It also pulls a fork of AOSPA/android_vendor_aospa (branch beryl) that registers
-  the aospa_fogos product, so the aospa_fogos-userdebug lunch target works out of the box.
 -->
 <manifest>
 
-  <remote name="fogos-gh"   fetch="https://github.com/nakchwalabhi" revision="aospa" />
-  <remote name="lineage-gh" fetch="https://github.com/LineageOS" />
+  <remote name="fogos-gh" fetch="https://github.com/nakchwalabhi" revision="beryl" />
 
-  <!-- AOSPA vendor config: use the fork that adds the aospa_fogos product -->
+  <!-- AOSPA vendor config: the fork that registers the aospa_fogos product -->
   <remove-project name="AOSPA/android_vendor_aospa" />
   <project path="vendor/aospa"
            name="android_vendor_aospa"
            remote="fogos-gh" revision="beryl" />
-
-  <!-- Converted AOSPA device + common trees -->
-  <project path="device/motorola/fogos"
-           name="android_device_motorola_fogos-aospa"
-           remote="fogos-gh" revision="aospa" />
-  <project path="device/motorola/sm6375-common"
-           name="android_device_motorola_sm6375-common-aospa"
-           remote="fogos-gh" revision="aospa" />
-
-  <!-- Vendor blobs (existing repos) -->
-  <project path="vendor/motorola/fogos"
-           name="proprietary_vendor_motorola_fogos"
-           remote="fogos-gh" revision="aospa" />
-  <project path="vendor/motorola/sm6375-common"
-           name="proprietary_vendor_motorola_sm6375-common"
-           remote="fogos-gh" revision="beryl" />
-
-  <!-- Kernel (Lineage/CLO msm-5.4, Android 16 QPR0 branch) -->
-  <project path="kernel/motorola/sm6375"
-           name="android_kernel_motorola_sm6375"
-           remote="lineage-gh" revision="lineage-23.0" />
-
-  <!-- Motorola hardware (MotoActions, MotoCommonOverlay, sepolicy) -->
-  <project path="hardware/motorola"
-           name="android_hardware_motorola"
-           remote="lineage-gh" revision="lineage-23.0" />
-
-  <!-- NFC: fogos uses the Samsung SLSI NFC HAL -->
-  <project path="hardware/samsung_slsi/nfc"
-           name="android_hardware_samsung_slsi_nfc"
-           remote="lineage-gh" revision="lineage-23.0" />
 
 </manifest>
