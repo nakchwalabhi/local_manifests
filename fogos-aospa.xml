@@ -8,14 +8,19 @@
   Base your source on the AOSPA "beryl" branch (AOSP android-16.0.0_r1):
       repo init -u https://github.com/AOSPA/manifest -b beryl
 
-  The device trees are the AOSPA (CLO-based) conversions of the lineage-23.0
-  (Android 16 QPR0) trees; vendor trees are the existing blob repos; the kernel
-  and Motorola/SLSI hardware come from LineageOS on the matching 23.0 branch.
+  It also pulls a fork of AOSPA/android_vendor_aospa (branch beryl) that registers
+  the aospa_fogos product, so `lunch aospa_fogos-userdebug` works out of the box.
 -->
 <manifest>
 
   <remote name="fogos-gh"   fetch="https://github.com/nakchwalabhi" revision="aospa" />
   <remote name="lineage-gh" fetch="https://github.com/LineageOS" />
+
+  <!-- AOSPA vendor config: use the fork that adds the aospa_fogos product -->
+  <remove-project name="AOSPA/android_vendor_aospa" />
+  <project path="vendor/aospa"
+           name="android_vendor_aospa"
+           remote="fogos-gh" revision="beryl" />
 
   <!-- Converted AOSPA device + common trees -->
   <project path="device/motorola/fogos"
