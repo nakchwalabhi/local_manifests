@@ -27,6 +27,13 @@
            name="android_packages_resources_devicesettings"
            remote="fogos-gh" revision="beryl" />
 
+  <!-- Lineage compat shims: fork adds libgui_buffer_shim_vendor, which Motorola's
+       libmot_chi_desktop_helper links against (AOSPA's compat omits it) -->
+  <remove-project name="AOSPA/android_hardware_lineage_compat" />
+  <project path="hardware/lineage/compat"
+           name="android_hardware_lineage_compat"
+           remote="fogos-gh" revision="beryl" />
+
   <!-- Kernel: fork adds Android.bp (Lineage ships it as "Androidbp") so Soong
        defines qti_kernel_headers -->
   <project path="kernel/motorola/sm6375"
