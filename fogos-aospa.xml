@@ -56,6 +56,15 @@
            name="android_external_libese"
            remote="fogos-gh" revision="beryl" />
 
+  <!-- device/qcom/common: AOSPA's fork declares a vendor_firmware_mnt_mountpoint
+       mkdir module whose install dir (vendor/firmware_mnt) is also created by
+       CLO core-utils' build/AndroidBoardCommon.mk, so make aborts on an
+       overriding rule. Use a fork with that mkdir module removed. -->
+  <remove-project name="AOSPA/android_device_qcom_common" />
+  <project path="device/qcom/common"
+           name="android_device_qcom_common"
+           remote="fogos-gh" revision="beryl" />
+
   <!-- Kernel: fork adds Android.bp (Lineage ships it as "Androidbp") so Soong
        defines qti_kernel_headers -->
   <project path="kernel/motorola/sm6375"
